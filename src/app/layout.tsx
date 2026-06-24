@@ -1,43 +1,30 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
-import "./globals.css";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
+import { ClerkProvider } from '@clerk/nextjs';
+import type { Metadata } from 'next';
+import './globals.css';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
-  title: "ISKCON Elites Network",
-  description: "A premier, high-credibility academic platform connecting global alumni and students.",
+ title: 'Iskcon Elites Network',
+ description: 'The exclusive network for alumni and speakers.',
 };
 
 export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <ClerkProvider
-      appearance={{
-        variables: {
-          colorPrimary: "#ffffff",
-          colorBackground: "#020617",
-        },
-      }}
-    >
-      <html lang="en" className={`${inter.variable} h-full antialiased`}>
-        <body className="min-h-full flex flex-col selection:bg-white/20 selection:text-white">
-          <Header />
-          <main className="flex-1 pt-20 flex flex-col">
-            {children}
-          </main>
-          <Footer />
-        </body>
-      </html>
-    </ClerkProvider>
-  );
+ children,
+}: {
+ children: React.ReactNode;
+}) {
+ return (
+   <ClerkProvider afterSignOutUrl="/">
+     <html lang="en">
+       <body className="antialiased bg-slate-950 text-slate-50 min-h-screen flex flex-col">
+         <Header />
+         <main className="flex-1 flex flex-col pt-20">
+           {children}
+         </main>
+         <Footer />
+       </body>
+     </html>
+   </ClerkProvider>
+ );
 }

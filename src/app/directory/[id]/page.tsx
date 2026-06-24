@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, GraduationCap, Calendar } from "lucide-react";
@@ -62,8 +62,21 @@ export default async function AlumnusProfilePage({ params }: Props) {
 
       <div className="bg-slate-900/40 border border-white/5 rounded-3xl p-8 md:p-12">
         <div className="flex flex-col md:flex-row gap-8 items-start">
-          <div className="w-32 h-32 shrink-0 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 text-5xl font-semibold border border-white/10">
-            {alumnus.name.charAt(0)}
+          <div className="relative group w-48 h-48 shrink-0 rounded-2xl overflow-hidden bg-slate-800 border border-white/10 shadow-xl transition-all duration-500 hover:shadow-2xl hover:scale-105 hover:border-white/30 flex items-center justify-center">
+            {alumnus.avatarUrl ? (
+              <img 
+                src={alumnus.avatarUrl} 
+                alt={alumnus.name} 
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+              />
+            ) : (
+              <div className="text-slate-400 text-6xl font-semibold tracking-tighter">
+                {alumnus.name.charAt(0)}
+              </div>
+            )}
+            
+            {/* Glossy hover overlay */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
           </div>
           
           <div className="space-y-4 flex-1">

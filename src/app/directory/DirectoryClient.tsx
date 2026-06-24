@@ -62,8 +62,12 @@ export default function DirectoryClient({ initialAlumni }: { initialAlumni: Alum
                 <Link href={`/directory/${alumnus.id}`} className="block h-full">
                   <div className="bg-slate-900/40 hover:bg-slate-800/50 border border-white/5 hover:border-white/10 rounded-2xl p-6 transition-all h-full flex flex-col group">
                     <div className="flex items-start justify-between mb-4">
-                      <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 font-medium text-lg border border-white/10 group-hover:border-slate-500 transition-colors">
-                        {alumnus.name.charAt(0)}
+                      <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 font-medium text-lg border border-white/10 group-hover:border-slate-500 transition-colors overflow-hidden shrink-0">
+                        {alumnus.avatarUrl ? (
+                          <img src={alumnus.avatarUrl} alt={alumnus.name} className="w-full h-full object-cover" />
+                        ) : (
+                          alumnus.name.charAt(0)
+                        )}
                       </div>
                       <span className="text-xs font-medium px-3 py-1 rounded-full bg-slate-950 border border-white/10 text-slate-400">
                         {alumnus.cohort}

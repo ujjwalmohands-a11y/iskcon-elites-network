@@ -33,11 +33,14 @@ export default function Header() {
 
         <div className="flex items-center gap-4">
           {isLoaded && !userId && (
-            <SignInButton mode="modal">
-              <button className="px-5 py-2.5 text-sm font-medium bg-white text-black rounded-full hover:bg-slate-200 transition-colors">
+            <div className="flex items-center gap-2">
+              <Link href="/sign-in" className="px-5 py-2.5 text-sm font-medium text-slate-300 hover:text-white transition-colors">
                 Sign In
-              </button>
-            </SignInButton>
+              </Link>
+              <Link href="/sign-up" className="px-5 py-2.5 text-sm font-medium bg-white text-black rounded-full hover:bg-slate-200 transition-colors">
+                Sign Up
+              </Link>
+            </div>
           )}
           {isLoaded && userId && (
             <UserButton appearance={{ elements: { avatarBox: "w-10 h-10" } }} />

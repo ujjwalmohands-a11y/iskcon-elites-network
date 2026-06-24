@@ -1,12 +1,12 @@
 /** @type {import('next').NextConfig} */
 const ContentSecurityPolicy = `
  default-src 'self';
- script-src 'self' 'unsafe-eval' 'unsafe-inline' https://clerk.com https://*.clerk.accounts.dev;
+ script-src 'self' 'unsafe-eval' 'unsafe-inline' https://clerk.com https://*.clerk.accounts.dev https://challenges.cloudflare.com;
  style-src 'self' 'unsafe-inline';
- img-src 'self' blob: data: https://img.clerk.com https://*.cloudflarestorage.com https://*.s3.amazonaws.com;
- media-src 'self' https://*.cloudflarestorage.com https://*.s3.amazonaws.com https://www.youtube.com;
- frame-src 'self' https://www.youtube.com https://clerk.com;
- connect-src 'self' https://api.clerk.com https://api.formspree.io;
+ img-src 'self' blob: data: https://img.clerk.com https://images.clerk.dev https://*.cloudflarestorage.com https://*.s3.amazonaws.com https://*.supabase.co;
+ media-src 'self' https://*.cloudflarestorage.com https://*.s3.amazonaws.com https://www.youtube.com https://*.supabase.co;
+ frame-src 'self' https://www.youtube.com https://clerk.com https://challenges.cloudflare.com;
+ connect-src 'self' https://api.clerk.com https://*.clerk.accounts.dev https://api.formspree.io;
  font-src 'self' data:;
  object-src 'none';
  base-uri 'self';
@@ -32,6 +32,7 @@ const nextConfig = {
  remotePatterns: [
  { protocol: 'https', hostname: 'img.clerk.com' },
  { protocol: 'https', hostname: '**.cloudflarestorage.com' },
+ { protocol: 'https', hostname: '**.supabase.co' },
  ],
  },
  async headers() {

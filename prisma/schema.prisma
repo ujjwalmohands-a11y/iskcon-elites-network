@@ -3,9 +3,34 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
+ provider = "postgresql"
 }
 
+// ------------------------------------------------------
+// 1. IAM & Security (Maps to Clerk Auth)
+// ------------------------------------------------------
+model User {
+ id String @id @default(uuid())
+ clerkId String @unique
+ email String @unique
+ role Role @default(USER)
+ createdAt DateTime @default(now())
+
+ // Audit Relations
+ alumni Alumnus[]
+ speakers Speaker[]
+ testimonials Testimonial[]
+}
+
+enum Role {
+ USER
+ ADMIN
+ SUPERADMIN
+}
+
+// ------------------------------------------------------
+// 2. Core Domain Models
+// ------------------------------------------------------
 model Alumnus {
  id String @id @default(uuid())
  name String
@@ -14,7 +39,10 @@ model Alumnus {
  bio String @db.Text
  avatarUrl String?
  videoUrl String?
- socialLinks Json?
+ socialLinks Json? 
+
+ addedById String
+ addedBy User @relation(fields: [addedById], references: [id])
  createdAt DateTime @default(now())
 }
 
@@ -24,6 +52,9 @@ model Speaker {
  title String
  bio String @db.Text
  avatarUrl String?
+
+ addedById String
+ addedBy User @relation(fields: [addedById], references: [id])
  createdAt DateTime @default(now())
 }
 
@@ -33,5 +64,8 @@ model Testimonial {
  role String
  content String @db.Text
  videoUrl String?
+
+ addedById String
+ addedBy User @relation(fields: [addedById], references: [id])
  createdAt DateTime @default(now())
 }

@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import DirectoryClient from "./DirectoryClient";
 
 import { Alumnus } from "@prisma/client";

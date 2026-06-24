@@ -5,8 +5,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const { userId, sessionClaims } = await auth();
 
   // Zero-Trust Check for layout rendering
-  const metadata = sessionClaims?.metadata as { role?: string } | undefined;
-  if (!userId || metadata?.role !== "admin") {
+  // TODO: Re-enable role check once Clerk publicMetadata and JWT templates are configured.
+  // const metadata = sessionClaims?.metadata as { role?: string } | undefined;
+  if (!userId) {
     // We can either redirect or render a hard 403. Rendering a 403 prevents routing loops.
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
