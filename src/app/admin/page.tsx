@@ -442,6 +442,14 @@ export default function AdminDashboard() {
                             Revoke Admin
                           </button>
                         )}
+                        {user.role === 'SUPERADMIN' && (
+                          <button 
+                            onClick={() => handleRoleChange(user.id, 'ADMIN')}
+                            className="text-xs font-semibold px-3 py-1.5 rounded-md bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-colors"
+                          >
+                            Revoke Superadmin
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))}
