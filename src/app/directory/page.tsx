@@ -35,7 +35,7 @@ export default async function DirectoryPage() {
       orderBy: { name: 'asc' } 
     });
 
-    const mappedAlumni: DirectoryMember[] = alumni.map(a => ({
+    const mappedAlumni: DirectoryMember[] = alumni.map((a: any) => ({
       id: a.id,
       name: a.name,
       avatarUrl: a.avatarUrl,
@@ -51,7 +51,7 @@ export default async function DirectoryPage() {
       isApproved: a.isApproved,
     }));
 
-    const mappedSpeakers: DirectoryMember[] = speakers.map(s => ({
+    const mappedSpeakers: DirectoryMember[] = speakers.map((s: any) => ({
       id: s.id,
       name: s.name,
       avatarUrl: s.avatarUrl,
