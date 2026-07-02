@@ -55,7 +55,12 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isApproved: true })
       });
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        data = { error: await res.text() || 'An error occurred' };
+      }
       if (res.ok && data.success) {
         setRecords(prev => ({
           ...prev,
@@ -73,15 +78,29 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetch('/api/directory')
-      .then(res => res.json())
-      .then(data => setRecords(data))
+      .then(async (res) => {
+        try {
+          return await res.json();
+        } catch (e) {
+          return { error: 'Failed to fetch directory' };
+        }
+      })
+      .then(data => {
+        if (!data.error) setRecords(data);
+      })
       .catch(err => console.error("Failed to fetch records:", err));
   }, [isPublishing, editingMember]); // Refresh after publishing or editing
 
   useEffect(() => {
     if (activeTab === 'users') {
       fetch('/api/users')
-        .then(res => res.json())
+        .then(async (res) => {
+          try {
+            return await res.json();
+          } catch (e) {
+            return { users: [] };
+          }
+        })
         .then(data => setUsers(data.users || []))
         .catch(err => console.error("Failed to fetch users:", err));
     }
@@ -95,7 +114,12 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role: newRole })
       });
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        data = { error: await res.text() || 'An error occurred' };
+      }
       if (res.ok && data.success) {
         setUsers(users.map(u => u.id === id ? { ...u, role: newRole } : u));
       } else {
@@ -116,7 +140,12 @@ export default function AdminDashboard() {
 
     try {
       const res = await fetch('/api/upload', { method: 'POST', body: formData });
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        data = { error: await res.text() || 'An error occurred' };
+      }
       if (data.url) setImageUrl(data.url);
     } catch (err) {
       console.error("Upload interface error:", err);
@@ -144,7 +173,12 @@ export default function AdminDashboard() {
         })
       });
 
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        data = { error: await res.text() || 'An error occurred' };
+      }
 
       if (res.ok && data.success) {
         setStatusMsg({ text: 'Entry published successfully!', type: 'success' });
@@ -171,7 +205,12 @@ export default function AdminDashboard() {
       const res = await fetch(`/api/directory?id=${id}&category=${category}`, {
         method: 'DELETE',
       });
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        data = { error: await res.text() || 'An error occurred' };
+      }
       if (res.ok && data.success) {
         // Trigger a re-fetch
         setRecords(prev => ({

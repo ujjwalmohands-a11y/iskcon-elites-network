@@ -36,7 +36,12 @@ export default function AddEntryModal({ isSignedIn, onClose, onSuccess }: AddEnt
 
     try {
       const res = await fetch('/api/upload', { method: 'POST', body: formData });
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        data = { error: await res.text() || 'An error occurred' };
+      }
       if (data.url) setImageUrl(data.url);
     } catch (err) {
       console.error('Upload interface error:', err);
@@ -67,7 +72,12 @@ export default function AddEntryModal({ isSignedIn, onClose, onSuccess }: AddEnt
         }),
       });
 
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        data = { error: await res.text() || 'An error occurred' };
+      }
 
       if (res.ok && data.success) {
         onSuccess();
