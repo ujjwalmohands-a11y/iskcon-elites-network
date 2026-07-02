@@ -73,10 +73,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetch('/api/directory')
-      .then(async res => {
-        if (!res.ok) throw new Error(await res.text());
-        return res.json();
-      })
+      .then(res => res.json())
       .then(data => setRecords(data))
       .catch(err => console.error("Failed to fetch records:", err));
   }, [isPublishing, editingMember]); // Refresh after publishing or editing
@@ -84,10 +81,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (activeTab === 'users') {
       fetch('/api/users')
-        .then(async res => {
-          if (!res.ok) throw new Error(await res.text());
-          return res.json();
-        })
+        .then(res => res.json())
         .then(data => setUsers(data.users || []))
         .catch(err => console.error("Failed to fetch users:", err));
     }
@@ -440,14 +434,6 @@ export default function AdminDashboard() {
                             className="text-xs font-semibold px-3 py-1.5 rounded-md bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
                           >
                             Revoke Admin
-                          </button>
-                        )}
-                        {user.role === 'SUPERADMIN' && (
-                          <button 
-                            onClick={() => handleRoleChange(user.id, 'ADMIN')}
-                            className="text-xs font-semibold px-3 py-1.5 rounded-md bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-colors"
-                          >
-                            Revoke Superadmin
                           </button>
                         )}
                       </td>
