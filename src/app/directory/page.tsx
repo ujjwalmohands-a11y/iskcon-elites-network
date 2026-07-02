@@ -1,4 +1,3 @@
-export const runtime = 'edge';
 import { Metadata } from "next";
 import prisma from "@/lib/prisma";
 import DirectoryClient, { DirectoryMember } from "./DirectoryClient";
