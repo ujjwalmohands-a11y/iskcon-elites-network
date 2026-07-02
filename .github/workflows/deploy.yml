@@ -23,12 +23,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Generate Prisma and delete large binaries
-        run: |
-          npx prisma generate
-          find node_modules/.prisma/client -name "*.node" -type f -delete || true
-          rm -rf node_modules/@prisma/engines || true
-
       - name: Build Next.js app for Cloudflare
         run: npx @opennextjs/cloudflare build
         env:
