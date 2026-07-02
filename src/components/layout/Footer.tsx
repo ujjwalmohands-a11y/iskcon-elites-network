@@ -30,12 +30,8 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center text-center md:text-left text-sm text-[#C5C6C7] gap-6 md:gap-0">
+        <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-center items-center text-center text-sm text-[#C5C6C7]">
           <p>© 2026 ISKCON Elites Network. All rights reserved. | Phone: +91 63705 07337</p>
-          <div className="flex flex-col md:flex-row gap-4 md:gap-6 text-xs">
-            <span className="hover:text-white transition-colors cursor-pointer duration-300">Academic Authority Protocol</span>
-            <span className="hover:text-white transition-colors cursor-pointer duration-300">Zero-Trust Architecture</span>
-          </div>
         </div>
       </div>
     </footer>
