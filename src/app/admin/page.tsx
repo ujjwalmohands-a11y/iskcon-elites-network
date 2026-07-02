@@ -73,7 +73,10 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetch('/api/directory')
-      .then(res => res.json())
+      .then(async res => {
+        if (!res.ok) throw new Error(await res.text());
+        return res.json();
+      })
       .then(data => setRecords(data))
       .catch(err => console.error("Failed to fetch records:", err));
   }, [isPublishing, editingMember]); // Refresh after publishing or editing
@@ -81,7 +84,10 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (activeTab === 'users') {
       fetch('/api/users')
-        .then(res => res.json())
+        .then(async res => {
+          if (!res.ok) throw new Error(await res.text());
+          return res.json();
+        })
         .then(data => setUsers(data.users || []))
         .catch(err => console.error("Failed to fetch users:", err));
     }
