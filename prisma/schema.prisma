@@ -40,9 +40,12 @@ model Alumnus {
  avatarUrl String?
  videoUrl String?
  socialLinks Json? 
-
+ email     String?  // optional contact email
+ story     String?  @db.Text
+ recommendation String? @db.Text
  addedById String
  addedBy User @relation(fields: [addedById], references: [id])
+ isApproved Boolean @default(false)
  createdAt DateTime @default(now())
 }
 
@@ -52,9 +55,10 @@ model Speaker {
  title String
  bio String @db.Text
  avatarUrl String?
-
+ email     String?  // optional contact email
  addedById String
  addedBy User @relation(fields: [addedById], references: [id])
+ isApproved Boolean @default(false)
  createdAt DateTime @default(now())
 }
 

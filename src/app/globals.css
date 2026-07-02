@@ -7,9 +7,9 @@
 }
 
 :root {
-  /* Enforcing deep slate/onyx cinematic vibe */
-  --background: #020617; /* slate-950 */
-  --foreground: #f8fafc; /* slate-50 */
+  /* Enforcing a premium deep dark theme */
+  --background: #0D0E12; 
+  --foreground: #f8fafc; 
 }
 
 body {
@@ -18,4 +18,11 @@ body {
   font-family: var(--font-sans), sans-serif;
   margin: 0;
   padding: 0;
+}
+
+@media (pointer: fine) {
+  html, body, a, button, input, select, textarea, .magnetic-target,
+  .cl-rootBox, .cl-card, .cl-formButtonPrimary, .cl-socialButtonsBlockButton, .cl-formFieldInput {
+    cursor: none !important;
+  }
 }

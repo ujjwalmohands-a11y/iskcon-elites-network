@@ -19,12 +19,12 @@ export async function POST(request: Request) {
       create: {
         clerkId: userId,
         email: email,
-        role: 'ADMIN', // Since only admins hit this API
+        role: 'USER', // Default to USER, not ADMIN
       },
     });
 
     const body = await request.json();
-    const { fullName, category, profileImage, cohort, title, bio } = body;
+    const { fullName, category, profileImage, cohort, title, bio, story, recommendation, email: contactEmail } = body;
 
     if (!fullName || !category || !bio) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -40,8 +40,12 @@ export async function POST(request: Request) {
           category: category,
           cohort: cohort,
           bio: bio,
+          story: story || null,
+          recommendation: recommendation || null,
+          email: contactEmail || null,
           avatarUrl: profileImage || null,
           addedById: dbUser.id,
+          isApproved: dbUser.role === 'ADMIN' || dbUser.role === 'SUPERADMIN',
         }
       });
       return NextResponse.json({ success: true, data: newAlumnus });
@@ -55,8 +59,10 @@ export async function POST(request: Request) {
           name: fullName,
           title: actualTitle,
           bio: bio,
+          email: contactEmail || null,
           avatarUrl: profileImage || null,
           addedById: dbUser.id,
+          isApproved: dbUser.role === 'ADMIN' || dbUser.role === 'SUPERADMIN',
         }
       });
       return NextResponse.json({ success: true, data: newSpeaker });
@@ -76,7 +82,37 @@ export async function GET() {
     const speakers = await prisma.speaker.findMany({ orderBy: { createdAt: 'desc' } });
     
     return NextResponse.json({ alumni, speakers });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch directory' }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    const url = new URL(request.url);
+    const id = url.searchParams.get('id');
+    const category = url.searchParams.get('category'); // 'alumni' or 'speaker'
+
+    if (!id || !category) {
+      return NextResponse.json({ error: 'Missing id or category' }, { status: 400 });
+    }
+
+    if (category === 'alumni') {
+      await prisma.alumnus.delete({ where: { id } });
+    } else if (category === 'speaker') {
+      await prisma.speaker.delete({ where: { id } });
+    } else {
+      return NextResponse.json({ error: 'Invalid category' }, { status: 400 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Directory Delete Error:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

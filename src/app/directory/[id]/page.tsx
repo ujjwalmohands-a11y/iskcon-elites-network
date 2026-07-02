@@ -8,31 +8,31 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
-// Precise Open Graph meta generation
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  let alumnus = null;
+  let member = null;
   try {
-    alumnus = await prisma.alumnus.findUnique({
-      where: { id },
-    });
+    member = await prisma.alumnus.findUnique({ where: { id } });
+    if (!member) {
+      member = await prisma.speaker.findUnique({ where: { id } });
+    }
   } catch {
     // Database connection issue
   }
 
-  if (!alumnus) {
+  if (!member) {
     return {
       title: "Profile Not Found | ISKCON Elites",
     };
   }
 
   return {
-    title: `${alumnus.name} | ISKCON Elites Network`,
-    description: alumnus.bio.substring(0, 160) || `View ${alumnus.name}'s profile on the ISKCON Elites Network.`,
+    title: `${member.name} | ISKCON Elites Network`,
+    description: member.bio.substring(0, 160) || `View ${member.name}'s profile on the ISKCON Elites Network.`,
     openGraph: {
-      title: `${alumnus.name} - ISKCON Elites`,
-      description: alumnus.bio.substring(0, 160),
-      images: alumnus.avatarUrl ? [{ url: alumnus.avatarUrl }] : [],
+      title: `${member.name} - ISKCON Elites`,
+      description: member.bio.substring(0, 160),
+      images: member.avatarUrl ? [{ url: member.avatarUrl }] : [],
     },
   };
 }
@@ -40,16 +40,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function AlumnusProfilePage({ params }: Props) {
   const { id } = await params;
   
-  let alumnus = null;
+  let member: { id: string; name: string; avatarUrl: string | null; bio: string; category?: string; cohort?: string; title?: string } | null = null;
+  let roleType = 'Alumni';
+
   try {
-    alumnus = await prisma.alumnus.findUnique({
-      where: { id },
-    });
+    member = await prisma.alumnus.findUnique({ where: { id } });
+    if (!member) {
+      member = await prisma.speaker.findUnique({ where: { id } });
+      roleType = 'Speaker';
+    }
   } catch {
     // DB not connected
   }
 
-  if (!alumnus) {
+  if (!member) {
     notFound();
   }
 
@@ -63,15 +67,16 @@ export default async function AlumnusProfilePage({ params }: Props) {
       <div className="bg-slate-900/40 border border-white/5 rounded-3xl p-8 md:p-12">
         <div className="flex flex-col md:flex-row gap-8 items-start">
           <div className="relative group w-48 h-48 shrink-0 rounded-2xl overflow-hidden bg-slate-800 border border-white/10 shadow-xl transition-all duration-500 hover:shadow-2xl hover:scale-105 hover:border-white/30 flex items-center justify-center">
-            {alumnus.avatarUrl ? (
+            {member.avatarUrl ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
               <img 
-                src={alumnus.avatarUrl} 
-                alt={alumnus.name} 
+                src={member.avatarUrl} 
+                alt={member.name} 
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
               />
             ) : (
               <div className="text-slate-400 text-6xl font-semibold tracking-tighter">
-                {alumnus.name.charAt(0)}
+                {member.name.charAt(0)}
               </div>
             )}
             
@@ -81,24 +86,24 @@ export default async function AlumnusProfilePage({ params }: Props) {
           
           <div className="space-y-4 flex-1">
             <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
-              {alumnus.name}
+              {member.name}
             </h1>
             
             <div className="flex flex-wrap gap-4 text-sm font-medium text-slate-400">
               <div className="flex items-center gap-2 bg-slate-950 border border-white/10 px-4 py-2 rounded-full">
                 <GraduationCap className="w-4 h-4 text-slate-300" />
-                {alumnus.category}
+                {roleType === 'Alumni' ? member.category : member.title}
               </div>
               <div className="flex items-center gap-2 bg-slate-950 border border-white/10 px-4 py-2 rounded-full">
                 <Calendar className="w-4 h-4 text-slate-300" />
-                Class of {alumnus.cohort}
+                {roleType === 'Alumni' ? `Class of ${member.cohort}` : roleType}
               </div>
             </div>
 
             <div className="pt-6 mt-6 border-t border-white/5">
               <h2 className="text-xl font-semibold text-slate-200 mb-4">About</h2>
               <p className="text-slate-400 leading-relaxed whitespace-pre-wrap">
-                {alumnus.bio}
+                {member.bio}
               </p>
             </div>
           </div>

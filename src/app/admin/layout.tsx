@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { ShieldAlert } from "lucide-react";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { userId, sessionClaims } = await auth();
+  const { userId } = await auth();
 
   // Zero-Trust Check for layout rendering
   // TODO: Re-enable role check once Clerk publicMetadata and JWT templates are configured.

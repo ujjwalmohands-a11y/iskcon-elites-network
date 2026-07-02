@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     const uniqueFilename = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
 
     // 4. Upload to Supabase Storage (Assumes a public bucket named 'profiles' exists)
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from('profiles')
       .upload(uniqueFilename, buffer, {
         contentType: file.type,
@@ -51,8 +51,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ url: publicUrlData.publicUrl });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Supabase Upload Exception:', error);
-    return NextResponse.json({ error: 'Upload failed: ' + error.message }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ error: 'Upload failed: ' + errorMessage }, { status: 500 });
   }
 }
