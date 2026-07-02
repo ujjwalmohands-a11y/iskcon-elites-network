@@ -5,4 +5,9 @@ export default {
   cloudflare: {
     useWorkerdCondition: false,
   },
+  build: {
+    esbuild: {
+      external: ["*.node"],
+    },
+  },
 };
