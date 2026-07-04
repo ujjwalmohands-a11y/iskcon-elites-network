@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "About | ISKCON Elites Network",
@@ -37,12 +38,12 @@ export default function AboutPage() {
         
         {/* Buttons */}
         <div className="mt-16 flex flex-col sm:flex-row items-center gap-6 justify-center w-full">
-          <button className="bg-[#D29E4D] text-white font-semibold py-4 px-10 rounded-full hover:bg-[#b88942] transition-colors w-full sm:w-auto tracking-wide">
+          <Link href="/sign-up" className="bg-[#D29E4D] text-white font-semibold py-4 px-10 rounded-full hover:bg-[#b88942] transition-colors w-full sm:w-auto tracking-wide text-center block sm:inline-block">
             Join the Network
-          </button>
-          <button className="bg-transparent border border-white/20 text-white font-medium py-4 px-10 rounded-full hover:bg-white/5 transition-colors flex items-center justify-center gap-3 w-full sm:w-auto tracking-wide">
+          </Link>
+          <Link href="/directory" className="bg-transparent border border-white/20 text-white font-medium py-4 px-10 rounded-full hover:bg-white/5 transition-colors flex items-center justify-center gap-3 w-full sm:w-auto tracking-wide text-center">
             View Directory <span className="text-xl leading-none">&rarr;</span>
-          </button>
+          </Link>
         </div>
         
       </div>

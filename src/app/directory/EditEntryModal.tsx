@@ -164,7 +164,7 @@ export default function EditEntryModal({ member, onClose, onSuccess }: EditEntry
             {/* Recommendation (Alumni Only) */}
             {member.roleType === 'Alumni' && (
               <div>
-                <label className="block text-xs font-medium uppercase tracking-wider text-zinc-500 mb-1.5">What do you recommend to others?</label>
+                <label className="block text-xs font-medium uppercase tracking-wider text-zinc-500 mb-1.5">Your POV on Krishna consciousness</label>
                 <textarea value={recommendation} onChange={e => setRecommendation(e.target.value)} required rows={3} className="w-full px-3 py-2 border border-white/10 rounded-lg text-sm focus:outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 bg-black/40 text-white transition-all shadow-sm" placeholder="Advice, books, practices..." />
               </div>
             )}
