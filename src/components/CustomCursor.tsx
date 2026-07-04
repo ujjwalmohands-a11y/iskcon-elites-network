@@ -95,7 +95,7 @@ export default function CustomCursor() {
   }, []);
 
   return (
-    <div style={{ zIndex: 999999 }} className="fixed top-0 left-0 pointer-events-none">
+    <div style={{ zIndex: 999999 }} className="fixed top-0 left-0 pointer-events-none hidden lg:block">
       {Array.from({ length: numDots }).map((_, i) => {
         const isMain = i === 0;
         return (

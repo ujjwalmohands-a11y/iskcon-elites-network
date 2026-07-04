@@ -11,6 +11,13 @@
 
   --font-sans: var(--font-inter);
   --font-serif: var(--font-playfair);
+
+  /* Strictly 2 Views: Mobile (< 1024px) and Desktop (>= 1024px) */
+  --breakpoint-sm: 1024px;
+  --breakpoint-md: 1024px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1024px;
+  --breakpoint-2xl: 1024px;
 }
 
 :root {
