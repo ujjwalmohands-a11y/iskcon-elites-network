@@ -70,7 +70,7 @@ export default async function DirectoryPage() {
   }
 
   return (
-    <div className="container mx-auto px-6 py-16 flex-1 max-w-6xl">
+    <div className="container mx-auto px-6 pt-32 pb-16 flex-1 max-w-6xl">
       <div className="mb-12 text-center max-w-3xl mx-auto">
         <h1 className="text-4xl md:text-5xl font-serif font-bold tracking-tight mb-4 text-[#0C1A30]">Global <span className="text-[#C5A059] italic">Directory</span></h1>
         <p className="text-gray-600 text-lg leading-relaxed">

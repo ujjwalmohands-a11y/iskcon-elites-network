@@ -5,9 +5,9 @@ import Link from "next/link";
 
 export default function MentorshipPage() {
   return (
-    <div className="min-h-screen bg-[#FDFBF7] pt-24 pb-20">
+    <div className="min-h-screen bg-[#FDFBF7] pt-32 pb-20">
       
-      {/* Header */}
+      {/* Hero Section */}
       <div className="container mx-auto px-6 mb-16 text-center max-w-3xl">
         <h1 className="text-4xl md:text-5xl font-serif font-bold text-[#0C1A30] mb-6">
           Mentorship <span className="text-[#C5A059] italic">Hub</span>

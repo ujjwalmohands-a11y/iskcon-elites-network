@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <div className="flex-1 flex flex-col w-full">
       {/* 1. HERO SECTION */}
-      <section className="relative w-full h-[90vh] min-h-[600px] flex items-center justify-center bg-[#0C1A30] overflow-hidden">
+      <section className="relative w-full min-h-screen md:h-[90vh] md:min-h-[600px] flex items-center justify-center pt-24 md:pt-0 bg-[#0C1A30] overflow-hidden">
         {/* Placeholder for Cinematic Background */}
         <div className="absolute inset-0 bg-[#0C1A30]/80 z-10" />
         <div 

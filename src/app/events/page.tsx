@@ -85,7 +85,7 @@ export default function EventsPage() {
   const highlightedEvent = events.find(e => e.isHighlighted) || events[0] || null;
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] pt-24 pb-0">
+    <div className="min-h-screen bg-[#FDFBF7] pt-32 pb-0">
       
       {/* Header */}
       <div className="container mx-auto px-6 mb-16 text-center max-w-3xl">

@@ -41,7 +41,7 @@ export default function SuccessStoriesPage() {
   const [activeCategory, setActiveCategory] = useState("All Stories");
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] pt-24 pb-20">
+    <div className="min-h-screen bg-[#FDFBF7] pt-32 pb-20">
       <div className="container mx-auto px-6">
         
         {/* Header Section */}
