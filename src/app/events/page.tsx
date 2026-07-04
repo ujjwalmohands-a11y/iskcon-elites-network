@@ -24,6 +24,7 @@ export default function EventsPage() {
   const [canCreate, setCanCreate] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<EventType | null>(null);
+  const [showPastEvents, setShowPastEvents] = useState(false);
 
   const loadEvents = async () => {
     try {
@@ -82,7 +83,15 @@ export default function EventsPage() {
     }
   };
 
-  const highlightedEvent = events.find(e => e.isHighlighted) || events[0] || null;
+  const now = new Date();
+  now.setHours(0, 0, 0, 0); // Reset time to start of day for accurate comparison
+
+  const upcomingEvents = events.filter(e => new Date(e.date) >= now);
+  const pastEvents = events.filter(e => new Date(e.date) < now).reverse(); // Show most recent past events first
+
+  const displayedEvents = showPastEvents ? pastEvents : upcomingEvents;
+
+  const highlightedEvent = events.find(e => e.isHighlighted) || upcomingEvents[0] || pastEvents[0] || null;
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] pt-32 pb-0">
@@ -104,7 +113,9 @@ export default function EventsPage() {
           {/* Left: Upcoming Dates */}
           <div className="w-full lg:w-1/2 flex flex-col justify-center">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl font-serif font-bold text-[#0C1A30]">Upcoming Dates</h2>
+              <h2 className="text-2xl font-serif font-bold text-[#0C1A30]">
+                {showPastEvents ? "Past Events" : "Upcoming Dates"}
+              </h2>
               {canCreate && (
                 <button 
                   onClick={() => setIsModalOpen(true)}
@@ -116,12 +127,12 @@ export default function EventsPage() {
             </div>
             
             <div className="space-y-6 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-              {events.length === 0 ? (
+              {displayedEvents.length === 0 ? (
                 <div className="text-center py-10 bg-white rounded-2xl border border-gray-100 shadow-sm">
-                  <p className="text-gray-500 font-medium">No upcoming events at the moment.</p>
+                  <p className="text-gray-500 font-medium">No {showPastEvents ? 'past' : 'upcoming'} events at the moment.</p>
                 </div>
               ) : (
-                events.map((event) => {
+                displayedEvents.map((event) => {
                   const d = new Date(event.date);
                   const dateNum = d.getDate();
                   const monthName = d.toLocaleString('default', { month: 'short' }).toUpperCase();
@@ -186,9 +197,12 @@ export default function EventsPage() {
             </div>
 
             <div className="mt-8">
-              <Link href="#" className="inline-flex items-center gap-2 text-[#0C1A30] font-semibold hover:text-[#D98A29] transition-colors">
-                View all past events <ArrowRight className="w-4 h-4" />
-              </Link>
+              <button 
+                onClick={() => setShowPastEvents(!showPastEvents)}
+                className="inline-flex items-center gap-2 text-[#0C1A30] font-semibold hover:text-[#D98A29] transition-colors"
+              >
+                {showPastEvents ? "View upcoming events" : "View all past events"} <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
           </div>
 
