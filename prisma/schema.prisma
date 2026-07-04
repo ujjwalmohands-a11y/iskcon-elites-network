@@ -20,6 +20,10 @@ model User {
  alumni Alumnus[]
  speakers Speaker[]
  testimonials Testimonial[]
+ events Event[]
+ 
+ // Permissions
+ canCreateEvents Boolean @default(false)
 }
 
 enum Role {
@@ -62,7 +66,7 @@ model Speaker {
  createdAt DateTime @default(now())
 }
 
-model Testimonial {
+ model Testimonial {
  id String @id @default(uuid())
  authorName String
  role String
@@ -71,5 +75,23 @@ model Testimonial {
 
  addedById String
  addedBy User @relation(fields: [addedById], references: [id])
+ createdAt DateTime @default(now())
+}
+
+// ------------------------------------------------------
+// 3. Events
+// ------------------------------------------------------
+ model Event {
+ id String @id @default(uuid())
+ title String
+ location String
+ date DateTime
+ time String
+ description String? @db.Text
+ imageUrl String?
+ isHighlighted Boolean @default(false)
+ addedById String
+ addedBy User @relation(fields: [addedById], references: [id])
+ isApproved Boolean @default(false)
  createdAt DateTime @default(now())
 }

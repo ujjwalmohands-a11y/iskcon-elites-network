@@ -35,14 +35,14 @@ export default async function DirectoryPage() {
       orderBy: { name: 'asc' } 
     });
 
-    const mappedAlumni: DirectoryMember[] = alumni.map((a: any) => ({
+    const mappedAlumni: DirectoryMember[] = alumni.map((a: { id: string, name: string, avatarUrl: string | null, cohort: string, category: string, bio: string | null, email: string | null, story: string | null, recommendation: string | null, isApproved: boolean }) => ({
       id: a.id,
       name: a.name,
       avatarUrl: a.avatarUrl,
       roleType: 'Alumni',
       primaryLabel: a.cohort,
       secondaryLabel: a.category,
-      bio: a.bio,
+      bio: a.bio ?? undefined,
       email: a.email,
       story: a.story,
       recommendation: a.recommendation,
@@ -51,14 +51,14 @@ export default async function DirectoryPage() {
       isApproved: a.isApproved,
     }));
 
-    const mappedSpeakers: DirectoryMember[] = speakers.map((s: any) => ({
+    const mappedSpeakers: DirectoryMember[] = speakers.map((s: { id: string, name: string, avatarUrl: string | null, title: string, bio: string | null, email: string | null, isApproved: boolean }) => ({
       id: s.id,
       name: s.name,
       avatarUrl: s.avatarUrl,
       roleType: 'Speaker',
       primaryLabel: s.title === 'Featured Guest' ? 'Guest' : 'Speaker',
       secondaryLabel: s.title,
-      bio: s.bio,
+      bio: s.bio ?? undefined,
       email: s.email,
       title: s.title,
       isApproved: s.isApproved,
@@ -70,11 +70,11 @@ export default async function DirectoryPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 md:px-8 py-10 md:py-16 flex-1">
-      <div className="mb-8 md:mb-12">
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white">Global Directory</h1>
-        <p className="text-[#C5C6C7] max-w-2xl text-base md:text-lg">
-          Connect with elite academic minds. Filter by institution category or graduation cohort.
+    <div className="container mx-auto px-6 py-16 flex-1 max-w-6xl">
+      <div className="mb-12 text-center max-w-3xl mx-auto">
+        <h1 className="text-4xl md:text-5xl font-serif font-bold tracking-tight mb-4 text-[#0C1A30]">Global <span className="text-[#C5A059] italic">Directory</span></h1>
+        <p className="text-gray-600 text-lg leading-relaxed">
+          Connect with elite academic minds. Filter by profession, location, and expertise to find the right mentors and peers.
         </p>
       </div>
 

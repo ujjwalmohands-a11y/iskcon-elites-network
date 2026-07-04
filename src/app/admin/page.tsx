@@ -24,9 +24,14 @@ export default function AdminDashboard() {
   const [editingMember, setEditingMember] = useState<DirectoryMember | null>(null);
 
   // Admin / User Management State
-  type UserType = { id: string; clerkId: string; email: string; role: 'USER' | 'ADMIN' | 'SUPERADMIN'; createdAt: string };
+  type UserType = { id: string; clerkId: string; email: string; role: 'USER' | 'ADMIN' | 'SUPERADMIN'; canCreateEvents: boolean; createdAt: string };
   const [users, setUsers] = useState<UserType[]>([]);
-  const [activeTab, setActiveTab] = useState<'directory' | 'users'>('directory');
+  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
+  const [activeTab, setActiveTab] = useState<'directory' | 'users' | 'events'>('directory');
+
+  // Events State
+  type EventType = { id: string; title: string; location: string; date: string; time: string };
+  const [events, setEvents] = useState<EventType[]>([]);
 
   const handleEdit = (record: RecordType, type: 'Alumni' | 'Speaker') => {
     const member: DirectoryMember = {
@@ -93,6 +98,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (activeTab === 'users') {
+      setIsLoadingUsers(true);
       fetch('/api/users')
         .then(async (res) => {
           try {
@@ -101,8 +107,19 @@ export default function AdminDashboard() {
             return { users: [] };
           }
         })
-        .then(data => setUsers(data.users || []))
-        .catch(err => console.error("Failed to fetch users:", err));
+        .then(data => {
+          setUsers(data.users || []);
+          setIsLoadingUsers(false);
+        })
+        .catch(err => {
+          console.error("Failed to fetch users:", err);
+          setIsLoadingUsers(false);
+        });
+    } else if (activeTab === 'events') {
+      fetch('/api/events')
+        .then(res => res.json())
+        .then(data => setEvents(data.events || []))
+        .catch(err => console.error("Failed to fetch events:", err));
     }
   }, [activeTab]);
 
@@ -114,12 +131,7 @@ export default function AdminDashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role: newRole })
       });
-      let data;
-      try {
-        data = await res.json();
-      } catch (e) {
-        data = { error: await res.text() || 'An error occurred' };
-      }
+      const data = await res.json();
       if (res.ok && data.success) {
         setUsers(users.map(u => u.id === id ? { ...u, role: newRole } : u));
       } else {
@@ -127,6 +139,39 @@ export default function AdminDashboard() {
       }
     } catch {
       alert('Network error while updating role');
+    }
+  };
+
+  const handleEventPermissionChange = async (id: string, canCreateEvents: boolean) => {
+    try {
+      const res = await fetch(`/api/users/${id}/permissions`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ canCreateEvents })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setUsers(users.map(u => u.id === id ? { ...u, canCreateEvents } : u));
+      } else {
+        alert(data.error || 'Failed to update permissions');
+      }
+    } catch {
+      alert('Network error while updating permissions');
+    }
+  };
+
+  const handleEventDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this event?')) return;
+    try {
+      const res = await fetch(`/api/events/${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setEvents(events.filter(e => e.id !== id));
+      } else {
+        alert(data.error || 'Failed to delete event');
+      }
+    } catch {
+      alert('Network error while deleting event');
     }
   };
 
@@ -257,6 +302,13 @@ export default function AdminDashboard() {
           >
             User Management
             {activeTab === 'users' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#45F3FF]" />}
+          </button>
+          <button 
+            onClick={() => setActiveTab('events')}
+            className={`pb-4 text-sm font-medium transition-colors relative ${activeTab === 'events' ? 'text-white' : 'text-zinc-500 hover:text-zinc-300'}`}
+          >
+            Events
+            {activeTab === 'events' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#45F3FF]" />}
           </button>
         </div>
       </div>
@@ -427,7 +479,7 @@ export default function AdminDashboard() {
           )}
         </section>
           </div>
-        ) : (
+        ) : activeTab === 'users' ? (
           <section className="bg-[#12141C] border border-white/10 rounded-xl p-6 shadow-sm">
             <h2 className="text-base font-semibold tracking-tight text-white mb-6">Registered Users</h2>
             <div className="overflow-x-auto">
@@ -437,6 +489,7 @@ export default function AdminDashboard() {
                     <th className="pb-3 font-medium px-4">Email</th>
                     <th className="pb-3 font-medium px-4">Clerk ID</th>
                     <th className="pb-3 font-medium px-4">Role</th>
+                    <th className="pb-3 font-medium px-4">Event Perms</th>
                     <th className="pb-3 font-medium px-4">Joined</th>
                     <th className="pb-3 font-medium px-4 text-right">Actions</th>
                   </tr>
@@ -454,6 +507,20 @@ export default function AdminDashboard() {
                         }`}>
                           {user.role}
                         </span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <label className="flex items-center cursor-pointer">
+                          <div className="relative">
+                            <input 
+                              type="checkbox" 
+                              className="sr-only" 
+                              checked={user.canCreateEvents} 
+                              onChange={(e) => handleEventPermissionChange(user.id, e.target.checked)} 
+                            />
+                            <div className={`block w-10 h-6 rounded-full transition-colors ${user.canCreateEvents ? 'bg-emerald-500' : 'bg-zinc-700'}`}></div>
+                            <div className={`dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${user.canCreateEvents ? 'transform translate-x-4' : ''}`}></div>
+                          </div>
+                        </label>
                       </td>
                       <td className="py-3 px-4 text-zinc-500 text-xs">
                         {new Date(user.createdAt).toLocaleDateString()}
@@ -478,10 +545,56 @@ export default function AdminDashboard() {
                       </td>
                     </tr>
                   ))}
-                  {users.length === 0 && (
+                  {isLoadingUsers ? (
                     <tr>
-                      <td colSpan={5} className="py-12 text-center text-zinc-500">
+                      <td colSpan={6} className="py-12 text-center text-zinc-500">
                         Loading users...
+                      </td>
+                    </tr>
+                  ) : users.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="py-12 text-center text-zinc-500">
+                        No users found, or you do not have permission to view them.
+                      </td>
+                    </tr>
+                  ) : null}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        ) : (
+          <section className="bg-[#12141C] border border-white/10 rounded-xl p-6 shadow-sm">
+            <h2 className="text-base font-semibold tracking-tight text-white mb-6">Published Events</h2>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm whitespace-nowrap">
+                <thead>
+                  <tr className="border-b border-white/10 text-[#C5C6C7] text-xs uppercase tracking-wider">
+                    <th className="pb-3 font-medium px-4">Title</th>
+                    <th className="pb-3 font-medium px-4">Location</th>
+                    <th className="pb-3 font-medium px-4">Date</th>
+                    <th className="pb-3 font-medium px-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {events.map(event => (
+                    <tr key={event.id} className="hover:bg-white/5 transition-colors">
+                      <td className="py-3 px-4 text-white font-medium">{event.title}</td>
+                      <td className="py-3 px-4 text-zinc-400">{event.location}</td>
+                      <td className="py-3 px-4 text-zinc-400">{new Date(event.date).toLocaleDateString()} at {event.time}</td>
+                      <td className="py-3 px-4 text-right">
+                        <button 
+                          onClick={() => handleEventDelete(event.id)}
+                          className="p-2 text-zinc-500 hover:text-red-400 hover:bg-red-950/30 rounded-md transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {events.length === 0 && (
+                    <tr>
+                      <td colSpan={4} className="py-12 text-center text-zinc-500">
+                        No events found.
                       </td>
                     </tr>
                   )}

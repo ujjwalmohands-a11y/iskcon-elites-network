@@ -70,21 +70,21 @@ export default function DirectoryClient({ initialMembers, isAdmin }: { initialMe
   return (
     <div className="space-y-8">
       {/* Hybrid Search & Filters */}
-      <div className="flex flex-col md:flex-row gap-4 bg-white/5 p-4 rounded-2xl border border-white/10 shadow-sm">
+      <div className="flex flex-col md:flex-row gap-4 bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
         <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
           <input
             type="text"
             placeholder="Search directory by name..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-[#12141C] border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#45F3FF] transition-shadow"
+            className="w-full bg-[#FDFBF7] border border-gray-200 rounded-xl pl-12 pr-4 py-3 text-[#0C1A30] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#D98A29] transition-shadow"
           />
         </div>
         <select
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
-          className="bg-[#12141C] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#45F3FF] appearance-none min-w-[200px]"
+          className="bg-[#FDFBF7] border border-gray-200 rounded-xl px-4 py-3 text-[#0C1A30] focus:outline-none focus:ring-2 focus:ring-[#D98A29] appearance-none min-w-[200px]"
         >
           {categories.map((cat) => (
             <option key={cat} value={cat}>
@@ -108,9 +108,9 @@ export default function DirectoryClient({ initialMembers, isAdmin }: { initialMe
                 key={member.id}
               >
                 <Link href={`/directory/${member.id}`} className="block h-full">
-                  <div className="bg-[#12141C] hover:bg-white/5 border border-white/10 hover:border-[#45F3FF]/50 rounded-2xl p-6 transition-all h-full flex flex-col group shadow-sm hover:shadow-md">
+                  <div className="bg-white hover:bg-[#FDFBF7] border border-gray-100 hover:border-[#C5A059]/50 rounded-2xl p-6 transition-all h-full flex flex-col group shadow-sm hover:shadow-md">
                     <div className="flex items-start justify-between mb-4">
-                      <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center text-zinc-500 font-medium text-lg border border-white/10 group-hover:border-white/20 transition-colors overflow-hidden shrink-0">
+                      <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 font-medium text-xl border-2 border-gray-100 group-hover:border-[#C5A059]/30 transition-colors overflow-hidden shrink-0 shadow-sm">
                         {member.avatarUrl ? (
                           /* eslint-disable-next-line @next/next/no-img-element */
                           <img src={member.avatarUrl} alt={member.name} className="w-full h-full object-cover" />
@@ -118,25 +118,25 @@ export default function DirectoryClient({ initialMembers, isAdmin }: { initialMe
                           member.name.charAt(0)
                         )}
                       </div>
-                      <span className="text-xs font-medium px-3 py-1 rounded-full bg-black/50 border border-white/10 text-[#C5C6C7]">
+                      <span className="text-xs font-semibold px-3 py-1 rounded-full bg-[#0C1A30]/5 border border-[#0C1A30]/10 text-[#0C1A30]">
                         {member.primaryLabel}
                       </span>
                     </div>
-                    <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-zinc-200 transition-colors flex items-center gap-2">
+                    <h3 className="text-xl font-serif font-bold text-[#0C1A30] mb-2 group-hover:text-[#D98A29] transition-colors flex items-center gap-2">
                       {member.name}
                       {isAdmin && !member.isApproved && (
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 uppercase tracking-wider">
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 border border-amber-500/20 uppercase tracking-wider">
                           Pending
                         </span>
                       )}
                     </h3>
-                    <div className="flex items-center gap-2 text-sm text-[#C5C6C7] mt-auto pt-4 border-t border-white/5">
+                    <div className="flex items-center gap-2 text-sm text-gray-500 mt-auto pt-4 border-t border-gray-100">
                       {member.roleType === 'Alumni' ? (
-                        <GraduationCap className="w-4 h-4" />
+                        <GraduationCap className="w-4 h-4 text-gray-400" />
                       ) : (
-                        <Mic className="w-4 h-4" />
+                        <Mic className="w-4 h-4 text-gray-400" />
                       )}
-                      <span className="truncate">{member.secondaryLabel}</span>
+                      <span className="truncate font-medium">{member.secondaryLabel}</span>
                       
                       {isAdmin && (
                         <div className="ml-auto flex items-center gap-2">
@@ -145,7 +145,7 @@ export default function DirectoryClient({ initialMembers, isAdmin }: { initialMe
                               e.preventDefault();
                               setEditingMember(member);
                             }}
-                            className="p-1.5 text-zinc-500 hover:text-white bg-black/50 rounded-lg border border-white/10 hover:border-white/20 shadow-sm transition-all"
+                            className="p-1.5 text-gray-400 hover:text-[#0C1A30] bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 shadow-sm transition-all"
                             title="Edit Profile"
                           >
                             <Edit2 className="w-4 h-4" />
@@ -153,7 +153,7 @@ export default function DirectoryClient({ initialMembers, isAdmin }: { initialMe
                           <button
                             onClick={(e) => handleDelete(member.id, member.roleType, e)}
                             disabled={isDeleting === member.id}
-                            className="p-1.5 text-zinc-500 hover:text-red-500 bg-black/50 rounded-lg border border-white/10 hover:border-red-900/50 hover:bg-red-900/20 shadow-sm transition-all disabled:opacity-50"
+                            className="p-1.5 text-gray-400 hover:text-red-600 bg-gray-50 rounded-lg border border-gray-200 hover:border-red-200 hover:bg-red-50 shadow-sm transition-all disabled:opacity-50"
                             title="Delete Profile"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -168,15 +168,15 @@ export default function DirectoryClient({ initialMembers, isAdmin }: { initialMe
           </AnimatePresence>
         </div>
       ) : (
-        <div className="text-center py-24 bg-white/5 border border-white/10 rounded-2xl shadow-sm">
-          <p className="text-zinc-500 text-lg">No records found matching your filters.</p>
+        <div className="text-center py-24 bg-white border border-gray-100 rounded-2xl shadow-sm">
+          <p className="text-gray-500 text-lg">No records found matching your filters.</p>
         </div>
       )}
 
       {/* Floating Add Button */}
       <button
         onClick={() => setShowAddModal(true)}
-        className="fixed bottom-6 md:bottom-8 right-6 md:right-8 bg-[#45F3FF] text-[#0B0C10] rounded-full p-4 shadow-[0_0_20px_rgba(69,243,255,0.25)] hover:scale-105 hover:bg-[#34d8e5] transition-all z-40 flex items-center justify-center group"
+        className="fixed bottom-6 md:bottom-8 right-6 md:right-8 bg-[#D98A29] text-white rounded-full p-4 shadow-lg hover:shadow-xl hover:scale-105 hover:bg-[#c47a22] transition-all z-40 flex items-center justify-center group"
         title="Add Directory Entry"
       >
         <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
 
 export async function GET() {
@@ -9,7 +9,23 @@ export async function GET() {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const dbUser = await prisma.user.findUnique({ where: { clerkId: userId } });
+    let dbUser = await prisma.user.findUnique({ where: { clerkId: userId } });
+    
+    if (!dbUser) {
+      // Auto-backfill user if webhook failed
+      const clerkUser = await currentUser();
+      if (clerkUser) {
+        dbUser = await prisma.user.create({
+          data: {
+            clerkId: userId,
+            email: clerkUser.emailAddresses[0]?.emailAddress || '',
+            role: 'SUPERADMIN',
+            canCreateEvents: true,
+          }
+        });
+      }
+    }
+
     if (!dbUser || (dbUser.role !== 'ADMIN' && dbUser.role !== 'SUPERADMIN')) {
       return new NextResponse('Forbidden', { status: 403 });
     }
@@ -21,6 +37,7 @@ export async function GET() {
         clerkId: true,
         email: true,
         role: true,
+        canCreateEvents: true,
         createdAt: true,
       }
     });

@@ -3,13 +3,20 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  
+  --color-brand-navy: #0C1A30;
+  --color-brand-cream: #FDFBF7;
+  --color-brand-saffron: #D98A29;
+  --color-brand-gold: #C5A059;
+
   --font-sans: var(--font-inter);
+  --font-serif: var(--font-playfair);
 }
 
 :root {
-  /* Enforcing a premium deep dark theme */
-  --background: #0D0E12; 
-  --foreground: #f8fafc; 
+  /* Enforcing a premium cream theme */
+  --background: #FDFBF7; 
+  --foreground: #1a1a1a; 
 }
 
 body {
@@ -18,11 +25,4 @@ body {
   font-family: var(--font-sans), sans-serif;
   margin: 0;
   padding: 0;
-}
-
-@media (pointer: fine) {
-  html, body, a, button, input, select, textarea, .magnetic-target,
-  .cl-rootBox, .cl-card, .cl-formButtonPrimary, .cl-socialButtonsBlockButton, .cl-formFieldInput {
-    cursor: none !important;
-  }
 }
