@@ -1,16 +1,32 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function CustomCursor() {
-  const cursorRef = useRef<HTMLDivElement>(null);
+  const dotsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const [isHovering, setIsHovering] = useState(false);
+
+  // Number of dots in the trail
+  const numDots = 10;
 
   useEffect(() => {
+    // Only run on non-touch devices
     if (window.matchMedia("(pointer: coarse)").matches) return;
 
     let mouseX = 0;
     let mouseY = 0;
-    let currentX = 0;
-    let currentY = 0;
+
+    const dots: { x: number; y: number; el: HTMLDivElement }[] = [];
+
+    // Initialize dots data
+    for (let i = 0; i < numDots; i++) {
+      if (dotsRef.current[i]) {
+        dots.push({
+          x: 0,
+          y: 0,
+          el: dotsRef.current[i]!
+        });
+      }
+    }
 
     const onMouseMove = (e: MouseEvent) => {
       mouseX = e.clientX;
@@ -18,13 +34,24 @@ export default function CustomCursor() {
     };
 
     const renderLoop = () => {
-      // Fast interpolation (0.3) makes it incredibly snappy and responsive
-      currentX += (mouseX - currentX) * 0.3;
-      currentY += (mouseY - currentY) * 0.3;
+      dots.forEach((dot, index) => {
+        // Main cursor (index 0) instantly follows the mouse
+        if (index === 0) {
+          dot.x = mouseX;
+          dot.y = mouseY;
+        } else {
+          // Trail dots interpolate position for a smooth delay effect
+          const prevDot = dots[index - 1];
+          // Easing value determines the speed/smoothness of the trail
+          dot.x += (prevDot.x - dot.x) * 0.4;
+          dot.y += (prevDot.y - dot.y) * 0.4;
+        }
 
-      if (cursorRef.current) {
-        cursorRef.current.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) translate(-50%, -50%)`;
-      }
+        if (dot.el) {
+          // Use translate3d to force hardware acceleration
+          dot.el.style.transform = `translate3d(${dot.x}px, ${dot.y}px, 0) translate(-50%, -50%)`;
+        }
+      });
 
       requestAnimationFrame(renderLoop);
     };
@@ -32,53 +59,27 @@ export default function CustomCursor() {
     window.addEventListener("mousemove", onMouseMove);
     const animationId = requestAnimationFrame(renderLoop);
 
-    // State switching on hover
-    const handleMouseEnter = (e: Event) => {
-      if (cursorRef.current) {
-        const target = e.target as HTMLElement;
-        const isClerk = target.closest('.cl-rootBox') !== null;
-
-        // Shrink and remove lens
-        cursorRef.current.classList.remove("w-4", "h-4", "bg-white", "mix-blend-difference");
-        
-        if (isClerk) {
-          cursorRef.current.classList.add("w-2", "h-2", "bg-[#FF6B00]", "shadow-[0_0_10px_#FF6B00]");
-        } else {
-          cursorRef.current.classList.add("w-2", "h-2", "bg-[#45F3FF]", "shadow-[0_0_10px_#45F3FF]");
-        }
-      }
-    };
-
-    const handleMouseLeave = () => {
-      if (cursorRef.current) {
-        // Return to inverted lens
-        cursorRef.current.classList.add("w-4", "h-4", "bg-white", "mix-blend-difference");
-        cursorRef.current.classList.remove(
-          "w-2", "h-2", 
-          "bg-[#45F3FF]", "shadow-[0_0_10px_#45F3FF]",
-          "bg-[#FF6B00]", "shadow-[0_0_10px_#FF6B00]"
-        );
-      }
-    };
+    // Hover state management
+    const handleMouseEnter = () => setIsHovering(true);
+    const handleMouseLeave = () => setIsHovering(false);
 
     const attachListeners = () => {
-      // Create a MutationObserver to attach listeners to dynamically added elements
+      const interactiveSelector = 'a, button, input, textarea, select, [role="button"], .interactive-target';
+      
       const observer = new MutationObserver(() => {
-        document.querySelectorAll('a, button, input, textarea, [role="button"], .interactive-target, .cl-rootBox button').forEach((el) => {
-          // Remove to avoid duplicates, then add
-          el.removeEventListener("mouseenter", handleMouseEnter as EventListener);
-          el.removeEventListener("mouseleave", handleMouseLeave as EventListener);
-          el.addEventListener("mouseenter", handleMouseEnter as EventListener);
-          el.addEventListener("mouseleave", handleMouseLeave as EventListener);
+        document.querySelectorAll(interactiveSelector).forEach((el) => {
+          el.removeEventListener("mouseenter", handleMouseEnter);
+          el.removeEventListener("mouseleave", handleMouseLeave);
+          el.addEventListener("mouseenter", handleMouseEnter);
+          el.addEventListener("mouseleave", handleMouseLeave);
         });
       });
       
       observer.observe(document.body, { childList: true, subtree: true });
 
-      // Initial attachment
-      document.querySelectorAll('a, button, input, textarea, [role="button"], .interactive-target, .cl-rootBox button').forEach((el) => {
-        el.addEventListener("mouseenter", handleMouseEnter as EventListener);
-        el.addEventListener("mouseleave", handleMouseLeave as EventListener);
+      document.querySelectorAll(interactiveSelector).forEach((el) => {
+        el.addEventListener("mouseenter", handleMouseEnter);
+        el.addEventListener("mouseleave", handleMouseLeave);
       });
       
       return observer;
@@ -94,10 +95,39 @@ export default function CustomCursor() {
   }, []);
 
   return (
-    <div
-      ref={cursorRef}
-      style={{ zIndex: 999999 }}
-      className="fixed top-0 left-0 w-4 h-4 bg-white mix-blend-difference rounded-full pointer-events-none will-change-transform transition-all duration-200 ease-out"
-    />
+    <div style={{ zIndex: 999999 }} className="fixed top-0 left-0 pointer-events-none">
+      {Array.from({ length: numDots }).map((_, i) => {
+        const isMain = i === 0;
+        return (
+          <div
+            key={i}
+            ref={(el) => {
+              if (el) dotsRef.current[i] = el;
+            }}
+            className={`fixed top-0 left-0 rounded-full pointer-events-none will-change-transform ${
+              isMain
+                ? "transition-all duration-300 ease-out"
+                : ""
+            }`}
+            style={{
+              // Hover state transitions for the main dot
+              width: isMain ? (isHovering ? "40px" : "6px") : `${6 - i * 0.4}px`,
+              height: isMain ? (isHovering ? "40px" : "6px") : `${6 - i * 0.4}px`,
+              backgroundColor: isMain && isHovering ? "transparent" : "#cfa04f",
+              border: isMain && isHovering ? "1.5px solid #cfa04f" : "none",
+              
+              // Fade out the trail
+              opacity: isMain ? 1 : 0.4 - i * 0.03,
+              
+              // Add a soft glow to the trail dots
+              boxShadow: isMain ? "none" : "0 0 4px rgba(207, 160, 79, 0.4)",
+              
+              // Hide the trail dots when hovering so only the hollow circle shows
+              display: isHovering && !isMain ? "none" : "block",
+            }}
+          />
+        );
+      })}
+    </div>
   );
 }

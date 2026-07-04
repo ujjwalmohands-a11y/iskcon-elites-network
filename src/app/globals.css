@@ -3,7 +3,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  
+
   --color-brand-navy: #0C1A30;
   --color-brand-cream: #FDFBF7;
   --color-brand-saffron: #D98A29;
@@ -15,8 +15,8 @@
 
 :root {
   /* Enforcing a premium cream theme */
-  --background: #FDFBF7; 
-  --foreground: #1a1a1a; 
+  --background: #FDFBF7;
+  --foreground: #1a1a1a;
 }
 
 body {
@@ -25,4 +25,22 @@ body {
   font-family: var(--font-sans), sans-serif;
   margin: 0;
   padding: 0;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
 }

@@ -23,7 +23,7 @@ export default function Home() {
         const combined = [...alumni, ...speakers];
         
         if (combined.length > 0) {
-          const formattedProfiles = combined.slice(0, 3).map((p: any) => ({
+          const formattedProfiles = combined.slice(0, 7).map((p: any) => ({
             name: p.name || 'Anonymous Member',
             title: p.cohort ? `Alumni (${p.cohort})` : (p.title || 'Professional Member'),
             country: 'Global', // Placeholder as country is not in schema
@@ -136,34 +136,41 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredProfiles.map((profile, i) => (
-              <div key={i} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow group cursor-pointer relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#C5A059]/10 to-transparent rounded-bl-full z-0" />
-                <div className="relative z-10">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-16 h-16 bg-gray-200 rounded-full overflow-hidden border-2 border-[#FDFBF7] shadow-sm relative flex items-center justify-center">
-                      {profile.avatarUrl ? (
-                        <img src={profile.avatarUrl} alt={profile.name} className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="text-xl text-gray-500 font-bold">{profile.name.charAt(0)}</span>
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-serif font-bold text-lg text-[#0C1A30] group-hover:text-[#D98A29] transition-colors line-clamp-1">{profile.name}</h3>
-                      <p className="text-sm font-medium text-gray-500 line-clamp-1">{profile.title}</p>
-                      <div className="flex items-center gap-1 mt-1 text-xs text-gray-400">
-                        <MapPin className="w-3 h-3" /> {profile.country}
+          <div className="relative overflow-hidden w-full group py-4">
+            {/* Gradient masks for smooth fade at edges */}
+            <div className="absolute top-0 left-0 w-8 md:w-32 h-full bg-gradient-to-r from-[#FDFBF7] to-transparent z-20 pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-8 md:w-32 h-full bg-gradient-to-l from-[#FDFBF7] to-transparent z-20 pointer-events-none"></div>
+
+            <div className="flex gap-8 w-max animate-marquee">
+              {/* Duplicate the array multiple times to ensure seamless infinite scroll */}
+              {[...featuredProfiles, ...featuredProfiles, ...featuredProfiles, ...featuredProfiles].map((profile, i) => (
+                <div key={i} className="w-[320px] md:w-[400px] shrink-0 bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#C5A059]/10 to-transparent rounded-bl-full z-0" />
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-16 h-16 bg-gray-200 rounded-full overflow-hidden border-2 border-[#FDFBF7] shadow-sm relative flex items-center justify-center shrink-0">
+                        {profile.avatarUrl ? (
+                          <img src={profile.avatarUrl} alt={profile.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-xl text-gray-500 font-bold">{profile.name.charAt(0)}</span>
+                        )}
+                      </div>
+                      <div className="flex-1 overflow-hidden">
+                        <h3 className="font-serif font-bold text-lg text-[#0C1A30] hover:text-[#D98A29] transition-colors truncate">{profile.name}</h3>
+                        <p className="text-sm font-medium text-gray-500 truncate">{profile.title}</p>
+                        <div className="flex items-center gap-1 mt-1 text-xs text-gray-400">
+                          <MapPin className="w-3 h-3 shrink-0" /> <span className="truncate">{profile.country}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="bg-[#FDFBF7] p-4 rounded-xl border border-gray-100 relative min-h-[80px]">
-                    <Quote className="absolute top-2 right-2 w-4 h-4 text-[#C5A059]/20" />
-                    <p className="text-gray-600 text-sm italic pr-4">&quot;{profile.quote}&quot;</p>
+                    <div className="bg-[#FDFBF7] p-4 rounded-xl border border-gray-100 relative min-h-[80px]">
+                      <Quote className="absolute top-2 right-2 w-4 h-4 text-[#C5A059]/20" />
+                      <p className="text-gray-600 text-sm italic pr-4">&quot;{profile.quote}&quot;</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
