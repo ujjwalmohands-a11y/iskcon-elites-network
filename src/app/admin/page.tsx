@@ -24,10 +24,15 @@ export default function AdminDashboard() {
   const [editingMember, setEditingMember] = useState<DirectoryMember | null>(null);
 
   // Admin / User Management State
-  type UserType = { id: string; clerkId: string; email: string; role: 'USER' | 'ADMIN' | 'SUPERADMIN'; canCreateEvents: boolean; createdAt: string };
+  type UserType = { id: string; clerkId: string; email: string; username?: string; role: 'USER' | 'ADMIN' | 'SUPERADMIN'; canCreateEvents: boolean; createdAt: string };
   const [users, setUsers] = useState<UserType[]>([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(true);
   const [activeTab, setActiveTab] = useState<'directory' | 'users' | 'events'>('directory');
+  
+  // Deletion Modal State
+  const [userToDelete, setUserToDelete] = useState<UserType | null>(null);
+  const [deleteUsernameInput, setDeleteUsernameInput] = useState('');
+  const [isDeletingUser, setIsDeletingUser] = useState(false);
 
   // Events State
   type EventType = { id: string; title: string; location: string; date: string; time: string };
@@ -133,12 +138,42 @@ export default function AdminDashboard() {
       });
       const data = await res.json();
       if (res.ok && data.success) {
-        setUsers(users.map(u => u.id === id ? { ...u, role: newRole } : u));
+        setUsers(prev => prev.map(u => u.id === id ? { ...u, role: newRole } : u));
       } else {
         alert(data.error || 'Failed to update role');
       }
     } catch {
       alert('Network error while updating role');
+    }
+  };
+
+  const promptDeleteUser = (user: UserType) => {
+    setUserToDelete(user);
+    setDeleteUsernameInput('');
+  };
+
+  const confirmDeleteUser = async () => {
+    if (!userToDelete) return;
+    const expected = userToDelete.username || userToDelete.email;
+    if (deleteUsernameInput !== expected) {
+      alert("Name did not match. Deletion cancelled.");
+      return;
+    }
+    
+    setIsDeletingUser(true);
+    try {
+      const res = await fetch(`/api/users/${userToDelete.id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setUsers(prev => prev.filter(u => u.id !== userToDelete.id));
+        setUserToDelete(null);
+      } else {
+        alert(data.error || 'Failed to delete user');
+      }
+    } catch {
+      alert('Network error while deleting user');
+    } finally {
+      setIsDeletingUser(false);
     }
   };
 
@@ -151,7 +186,7 @@ export default function AdminDashboard() {
       });
       const data = await res.json();
       if (res.ok && data.success) {
-        setUsers(users.map(u => u.id === id ? { ...u, canCreateEvents } : u));
+        setUsers(prev => prev.map(u => u.id === id ? { ...u, canCreateEvents } : u));
       } else {
         alert(data.error || 'Failed to update permissions');
       }
@@ -486,7 +521,7 @@ export default function AdminDashboard() {
               <table className="w-full text-left text-sm whitespace-nowrap">
                 <thead>
                   <tr className="border-b border-white/10 text-[#C5C6C7] text-xs uppercase tracking-wider">
-                    <th className="pb-3 font-medium px-4">Email</th>
+                    <th className="pb-3 font-medium px-4">User</th>
                     <th className="pb-3 font-medium px-4">Clerk ID</th>
                     <th className="pb-3 font-medium px-4">Role</th>
                     <th className="pb-3 font-medium px-4">Event Perms</th>
@@ -497,7 +532,10 @@ export default function AdminDashboard() {
                 <tbody className="divide-y divide-white/5">
                   {users.map(user => (
                     <tr key={user.id} className="hover:bg-white/5 transition-colors">
-                      <td className="py-3 px-4 text-white">{user.email}</td>
+                      <td className="py-3 px-4 text-white">
+                        <div className="font-medium">{user.username || 'Unknown'}</div>
+                        <div className="text-xs text-zinc-500">{user.email}</div>
+                      </td>
                       <td className="py-3 px-4 text-zinc-500 font-mono text-xs">{user.clerkId.substring(0, 12)}...</td>
                       <td className="py-3 px-4">
                         <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
@@ -509,23 +547,18 @@ export default function AdminDashboard() {
                         </span>
                       </td>
                       <td className="py-3 px-4">
-                        <label className="flex items-center cursor-pointer">
-                          <div className="relative">
-                            <input 
-                              type="checkbox" 
-                              className="sr-only" 
-                              checked={user.canCreateEvents} 
-                              onChange={(e) => handleEventPermissionChange(user.id, e.target.checked)} 
-                            />
-                            <div className={`block w-10 h-6 rounded-full transition-colors ${user.canCreateEvents ? 'bg-emerald-500' : 'bg-zinc-700'}`}></div>
-                            <div className={`dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${user.canCreateEvents ? 'transform translate-x-4' : ''}`}></div>
-                          </div>
-                        </label>
+                        <button 
+                          onClick={() => handleEventPermissionChange(user.id, !user.canCreateEvents)}
+                          className={`relative flex items-center cursor-pointer w-10 h-6 rounded-full transition-colors focus:outline-none ${user.canCreateEvents ? 'bg-emerald-500' : 'bg-zinc-700'}`}
+                          title={user.canCreateEvents ? 'Revoke Event Permissions' : 'Grant Event Permissions'}
+                        >
+                          <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${user.canCreateEvents ? 'transform translate-x-4' : ''}`}></div>
+                        </button>
                       </td>
                       <td className="py-3 px-4 text-zinc-500 text-xs">
                         {new Date(user.createdAt).toLocaleDateString()}
                       </td>
-                      <td className="py-3 px-4 text-right space-x-2">
+                      <td className="py-3 px-4 text-right flex justify-end items-center gap-2">
                         {user.role === 'USER' && (
                           <button 
                             onClick={() => handleRoleChange(user.id, 'ADMIN')}
@@ -540,6 +573,15 @@ export default function AdminDashboard() {
                             className="text-xs font-semibold px-3 py-1.5 rounded-md bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
                           >
                             Revoke Admin
+                          </button>
+                        )}
+                        {user.role !== 'SUPERADMIN' && (
+                          <button
+                            onClick={() => promptDeleteUser(user)}
+                            className="p-1.5 text-zinc-500 hover:text-red-400 hover:bg-red-950/30 rounded-md transition-colors"
+                            title="Delete User"
+                          >
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         )}
                       </td>
@@ -616,6 +658,52 @@ export default function AdminDashboard() {
               // useEffect will trigger re-fetch because editingMember changes
             }}
           />
+        )}
+      </AnimatePresence>
+
+      {/* Delete User Modal */}
+      <AnimatePresence>
+        {userToDelete && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div 
+              className="bg-[#12141C] border border-red-500/20 rounded-xl p-6 shadow-2xl max-w-md w-full"
+            >
+              <h3 className="text-lg font-semibold text-white mb-2">Delete User</h3>
+              <p className="text-sm text-zinc-400 mb-6">
+                Are you sure you want to delete <span className="font-bold text-white">{userToDelete.email}</span>? This action cannot be undone.
+              </p>
+              
+              <div className="mb-6">
+                <label className="block text-xs font-medium uppercase tracking-wider text-[#C5C6C7] mb-1.5">
+                  Type <strong>{userToDelete.username || userToDelete.email}</strong> to confirm
+                </label>
+                <input 
+                  type="text" 
+                  value={deleteUsernameInput} 
+                  onChange={e => setDeleteUsernameInput(e.target.value)}
+                  className="w-full px-3 py-2 border border-white/10 rounded-lg text-sm focus:outline-none focus:border-red-500 bg-black/40 text-white transition-colors"
+                  placeholder={userToDelete.username || userToDelete.email}
+                />
+              </div>
+              
+              <div className="flex gap-3 justify-end">
+                <button 
+                  onClick={() => setUserToDelete(null)}
+                  className="px-4 py-2 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-white/5 transition-colors"
+                  disabled={isDeletingUser}
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={confirmDeleteUser}
+                  disabled={deleteUsernameInput !== (userToDelete.username || userToDelete.email) || isDeletingUser}
+                  className="px-4 py-2 bg-red-500 hover:bg-red-600 disabled:opacity-50 disabled:hover:bg-red-500 text-white rounded-lg text-sm font-medium transition-colors"
+                >
+                  {isDeletingUser ? 'Deleting...' : 'Delete User'}
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </AnimatePresence>
     </div>

@@ -21,7 +21,7 @@ export default function Home() {
         const alumni = (data.alumni || []).filter((a: any) => a.isApproved !== false);
         const speakers = (data.speakers || []).filter((s: any) => s.isApproved !== false);
         const combined = [...alumni, ...speakers];
-        
+
         if (combined.length > 0) {
           const formattedProfiles = combined.slice(0, 7).map((p: any) => ({
             name: p.name || 'Anonymous Member',
@@ -46,11 +46,11 @@ export default function Home() {
       <section className="relative w-full min-h-screen md:h-[90vh] md:min-h-[600px] flex items-center justify-center pt-24 md:pt-28 bg-[#0C1A30] overflow-hidden">
         {/* Placeholder for Cinematic Background */}
         <div className="absolute inset-0 bg-[#0C1A30]/80 z-10" />
-        <div 
+        <div
           className="absolute inset-0 z-0 opacity-40 bg-cover bg-center"
           style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1577985043696-8bd54d9f093f?q=80&w=2000&auto=format&fit=crop")' }}
         />
-        
+
         <div className="container mx-auto px-6 relative z-20 text-center flex flex-col items-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -60,7 +60,7 @@ export default function Home() {
           >
             Connecting The Global Community
           </motion.div>
-          
+
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -207,7 +207,7 @@ export default function Home() {
         <div className="absolute inset-0 opacity-10 pointer-events-none flex items-center justify-center">
           <Globe className="w-[800px] h-[800px] text-white" />
         </div>
-        
+
         <div className="container mx-auto px-6 relative z-10 text-center">
           <h2 className="text-3xl md:text-5xl font-serif font-bold text-white mb-6">Join Our Global Network</h2>
           <p className="text-lg text-gray-300 max-w-2xl mx-auto mb-10">

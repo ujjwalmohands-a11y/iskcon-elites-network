@@ -22,12 +22,21 @@ export async function GET() {
       // Auto-backfill user if webhook failed
       const clerkUser = await currentUser();
       if (clerkUser) {
+        const userCount = await prisma.user.count();
+        const isFirstUser = userCount === 0;
+
+        const clerkEmail = clerkUser.emailAddresses[0]?.emailAddress || '';
+        const clerkUsername = clerkUser.username || 
+                             (clerkUser.firstName ? `${clerkUser.firstName} ${clerkUser.lastName || ''}`.trim() : 
+                             clerkEmail.split('@')[0]);
+
         dbUser = await prisma.user.create({
           data: {
             clerkId: userId,
-            email: clerkUser.emailAddresses[0]?.emailAddress || '',
-            role: 'SUPERADMIN', // Default first user to SUPERADMIN for testing
-            canCreateEvents: true,
+            email: clerkEmail,
+            username: clerkUsername,
+            role: isFirstUser ? 'SUPERADMIN' : 'USER',
+            canCreateEvents: isFirstUser,
           }
         });
       }

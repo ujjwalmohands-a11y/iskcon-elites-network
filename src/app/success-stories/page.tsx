@@ -43,7 +43,7 @@ export default function SuccessStoriesPage() {
   return (
     <div className="min-h-screen bg-[#FDFBF7] pt-32 pb-20">
       <div className="container mx-auto px-6">
-        
+
         {/* Header Section */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-[#0C1A30] mb-6">
@@ -60,11 +60,10 @@ export default function SuccessStoriesPage() {
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
-                activeCategory === cat 
-                  ? "bg-[#0C1A30] text-white shadow-md" 
+              className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${activeCategory === cat
+                  ? "bg-[#0C1A30] text-white shadow-md"
                   : "bg-white text-gray-600 border border-gray-200 hover:border-[#C5A059] hover:text-[#0C1A30]"
-              }`}
+                }`}
             >
               {cat}
             </button>
@@ -75,7 +74,7 @@ export default function SuccessStoriesPage() {
         <div className="mb-12 rounded-3xl overflow-hidden bg-white shadow-sm border border-gray-100 flex flex-col md:flex-row group cursor-pointer hover:shadow-lg transition-shadow">
           <div className="md:w-3/5 h-80 md:h-[500px] relative overflow-hidden">
             <div className="absolute inset-0 bg-[#0C1A30]/20 group-hover:bg-transparent transition-colors z-10" />
-            <div 
+            <div
               className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
               style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=1740&auto=format&fit=crop")' }}
             />
@@ -88,7 +87,7 @@ export default function SuccessStoriesPage() {
             <p className="text-gray-600 mb-8 line-clamp-3">
               An inspiring account of balancing intense preparation with inner peace, and the role of timeless wisdom in modern administrative challenges.
             </p>
-            
+
             <div className="mt-auto flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gray-200 rounded-full overflow-hidden border border-gray-300">
@@ -99,7 +98,7 @@ export default function SuccessStoriesPage() {
                   <p className="text-xs text-gray-500">Joint Secretary</p>
                 </div>
               </div>
-              
+
               <Link href="#" className="flex items-center gap-2 text-[#0C1A30] font-semibold text-sm group-hover:text-[#D98A29] transition-colors">
                 Read Story <ArrowRight className="w-4 h-4" />
               </Link>
@@ -112,7 +111,7 @@ export default function SuccessStoriesPage() {
           {SECONDARY_STORIES.map((story, i) => (
             <div key={i} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col sm:flex-row group cursor-pointer hover:shadow-md transition-shadow">
               <div className="sm:w-2/5 h-48 sm:h-auto relative overflow-hidden">
-                <div 
+                <div
                   className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
                   style={{ backgroundImage: `url(${story.imageUrl})` }}
                 />

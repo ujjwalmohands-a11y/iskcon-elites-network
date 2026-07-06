@@ -19,17 +19,17 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
- title: 'Iskcon Elites Network',
- description: 'Where Spiritual Wisdom Meets Professional Excellence.',
+  title: 'Iskcon Elites Network',
+  description: 'Where Spiritual Wisdom Meets Professional Excellence.',
 };
 
 export default function RootLayout({
- children,
+  children,
 }: {
- children: React.ReactNode;
+  children: React.ReactNode;
 }) {
- return (
-    <ClerkProvider 
+  return (
+    <ClerkProvider
       afterSignOutUrl="/"
       appearance={{
         elements: {
@@ -44,21 +44,21 @@ export default function RootLayout({
     >
       <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
         <body className="antialiased bg-[var(--color-brand-cream)] text-[var(--color-brand-navy)] min-h-screen flex flex-col font-sans selection:bg-[#D98A29]/20 selection:text-[#0C1A30]">
-         <div className="relative min-h-screen flex flex-col overflow-x-hidden">
-           <CustomCursor />
-           
-           {/* Core Page Content */}
-           <div className="relative z-10 flex-1 flex flex-col">
-             <Header />
-             <main className="flex-1 flex flex-col">
-               {children}
-             </main>
-             <Footer />
-           </div>
-           
-         </div>
-       </body>
-     </html>
-   </ClerkProvider>
- );
+          <div className="relative min-h-screen flex flex-col overflow-x-hidden">
+            <CustomCursor />
+
+            {/* Core Page Content */}
+            <div className="relative z-10 flex-1 flex flex-col">
+              <Header />
+              <main className="flex-1 flex flex-col">
+                {children}
+              </main>
+              <Footer />
+            </div>
+
+          </div>
+        </body>
+      </html>
+    </ClerkProvider>
+  );
 }

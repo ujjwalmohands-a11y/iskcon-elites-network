@@ -29,7 +29,7 @@ export type DirectoryMember = {
 export default function DirectoryClient({ initialMembers, isAdmin }: { initialMembers: DirectoryMember[], isAdmin?: boolean }) {
   const { isSignedIn } = useUser();
   const router = useRouter();
-  
+
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [showAddModal, setShowAddModal] = useState(false);
@@ -39,7 +39,7 @@ export default function DirectoryClient({ initialMembers, isAdmin }: { initialMe
   const handleDelete = async (id: string, roleType: string, e: React.MouseEvent) => {
     e.preventDefault();
     if (!confirm("Are you sure you want to delete this profile?")) return;
-    
+
     setIsDeleting(id);
     try {
       const res = await fetch(`/api/directory/${id}?type=${roleType}`, {
@@ -137,7 +137,7 @@ export default function DirectoryClient({ initialMembers, isAdmin }: { initialMe
                         <Mic className="w-4 h-4 text-gray-400" />
                       )}
                       <span className="truncate font-medium">{member.secondaryLabel}</span>
-                      
+
                       {isAdmin && (
                         <div className="ml-auto flex items-center gap-2">
                           <button

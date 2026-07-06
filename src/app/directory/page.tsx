@@ -26,13 +26,13 @@ export default async function DirectoryPage() {
 
     const whereClause = isAdmin ? {} : { isApproved: true };
 
-    const alumni = await prisma.alumnus.findMany({ 
+    const alumni = await prisma.alumnus.findMany({
       where: whereClause,
-      orderBy: { name: 'asc' } 
+      orderBy: { name: 'asc' }
     });
-    const speakers = await prisma.speaker.findMany({ 
+    const speakers = await prisma.speaker.findMany({
       where: whereClause,
-      orderBy: { name: 'asc' } 
+      orderBy: { name: 'asc' }
     });
 
     const mappedAlumni: DirectoryMember[] = alumni.map((a: { id: string, name: string, avatarUrl: string | null, cohort: string, category: string, bio: string | null, email: string | null, story: string | null, recommendation: string | null, isApproved: boolean }) => ({

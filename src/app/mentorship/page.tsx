@@ -6,7 +6,7 @@ import Link from "next/link";
 export default function MentorshipPage() {
   return (
     <div className="min-h-screen bg-[#FDFBF7] pt-32 pb-20">
-      
+
       {/* Hero Section */}
       <div className="container mx-auto px-6 mb-16 text-center max-w-3xl">
         <h1 className="text-4xl md:text-5xl font-serif font-bold text-[#0C1A30] mb-6">
@@ -20,7 +20,7 @@ export default function MentorshipPage() {
       {/* Dual Action Portal */}
       <div className="container mx-auto px-6 mb-24">
         <div className="grid md:grid-cols-2 gap-6">
-          
+
           {/* Find a Mentor */}
           <div className="bg-[#0C1A30] rounded-3xl p-10 md:p-14 text-white relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-[#C5A059]/20 to-transparent rounded-bl-[100%] z-0 transition-transform duration-700 group-hover:scale-110" />
@@ -61,7 +61,7 @@ export default function MentorshipPage() {
             <h2 className="text-3xl font-serif font-bold text-[#0C1A30] mb-4">Popular Focus Areas</h2>
             <p className="text-gray-600">Our mentors specialize in guiding you through critical career transitions.</p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {[
               { icon: Briefcase, title: "Career Guidance", desc: "Navigate promotions, pivots, and corporate leadership." },
@@ -89,23 +89,23 @@ export default function MentorshipPage() {
               Dr. Sanjay Kapoor
             </h2>
             <p className="text-[#D98A29] font-semibold mb-6">Former Director, Global Strategy</p>
-            
+
             <div className="bg-white/5 border border-white/10 p-6 rounded-xl mb-8 relative">
               <p className="text-gray-300 italic text-sm leading-relaxed">
                 &quot;Mentorship is not just about transferring skills; it&apos;s about transferring values. True success in the corporate world requires an anchor in spiritual principles.&quot;
               </p>
             </div>
-            
+
             <button className="bg-[#D98A29] text-white px-8 py-3 rounded-full font-semibold hover:bg-[#c47a22] transition-colors shadow-lg w-fit">
               Book a Session
             </button>
           </div>
-          
+
           <div className="md:w-1/2 h-80 md:h-auto relative bg-gray-200">
-             <div 
-                className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1587&auto=format&fit=crop")' }}
-              />
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1587&auto=format&fit=crop")' }}
+            />
           </div>
         </div>
       </div>

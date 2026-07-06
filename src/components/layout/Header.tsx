@@ -50,7 +50,7 @@ export default function Header() {
             ISKCON <span className="text-[#C5A059]">ELITE</span>
           </span>
         </Link>
-        
+
         <nav className="hidden lg:flex gap-8 text-sm font-medium text-gray-300 absolute left-1/2 -translate-x-1/2">
           <Link href="/" className="hover:text-white transition-colors duration-300">Home</Link>
           <Link href="/about" className="hover:text-white transition-colors duration-300">About</Link>
@@ -76,7 +76,7 @@ export default function Header() {
               <UserButton appearance={{ elements: { avatarBox: "w-10 h-10 border-2 border-[#C5A059]" } }} />
             )}
           </div>
-          
+
           {/* Mobile Menu Toggle */}
           <div className="flex lg:hidden items-center gap-4">
             {isLoaded && userId && (

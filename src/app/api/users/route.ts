@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { auth, currentUser } from '@clerk/nextjs/server';
+import { auth, currentUser, clerkClient } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
 
 export async function GET() {
@@ -15,12 +15,21 @@ export async function GET() {
       // Auto-backfill user if webhook failed
       const clerkUser = await currentUser();
       if (clerkUser) {
+        const userCount = await prisma.user.count();
+        const isFirstUser = userCount === 0;
+
+        const clerkEmail = clerkUser.emailAddresses[0]?.emailAddress || '';
+        const clerkUsername = clerkUser.username || 
+                             (clerkUser.firstName ? `${clerkUser.firstName} ${clerkUser.lastName || ''}`.trim() : 
+                             clerkEmail.split('@')[0]);
+
         dbUser = await prisma.user.create({
           data: {
             clerkId: userId,
-            email: clerkUser.emailAddresses[0]?.emailAddress || '',
-            role: 'SUPERADMIN',
-            canCreateEvents: true,
+            email: clerkEmail,
+            username: clerkUsername,
+            role: isFirstUser ? 'SUPERADMIN' : 'USER',
+            canCreateEvents: isFirstUser,
           }
         });
       }
@@ -30,12 +39,46 @@ export async function GET() {
       return new NextResponse('Forbidden', { status: 403 });
     }
 
+    // Admin is authorized. Let's proactively sync all Clerk users to Prisma to ensure the dashboard is accurate.
+    try {
+      const client = await clerkClient();
+      const clerkUsers = await client.users.getUserList();
+      
+      const userCount = await prisma.user.count();
+      const isFirstUser = userCount === 0;
+
+      for (const u of clerkUsers.data) {
+        const email = u.emailAddresses[0]?.emailAddress || '';
+        const username = u.username || 
+                        (u.firstName ? `${u.firstName} ${u.lastName || ''}`.trim() : 
+                        email.split('@')[0]);
+        
+        await prisma.user.upsert({
+          where: { clerkId: u.id },
+          update: {
+            email: email,
+            username: username,
+          },
+          create: {
+            clerkId: u.id,
+            email: email,
+            username: username,
+            role: isFirstUser ? 'SUPERADMIN' : 'USER',
+            canCreateEvents: isFirstUser,
+          }
+        });
+      }
+    } catch (syncError) {
+      console.warn("Could not sync users from Clerk (API key may be missing):", syncError);
+    }
+
     const users = await prisma.user.findMany({
       orderBy: { createdAt: 'desc' },
       select: {
         id: true,
         clerkId: true,
         email: true,
+        username: true,
         role: true,
         canCreateEvents: true,
         createdAt: true,
